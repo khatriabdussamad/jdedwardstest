@@ -1,0 +1,93 @@
+<html>
+<body>
+
+<h2>JavaScript Functions</h2>
+
+<p>Accessing JD Edwards Javascript parameters</p>
+
+<p id="Username"></p>
+<p id="UserId"></p>
+
+<script>
+    
+	var WSJNewVersion = 'ZJDE0001';
+	getUserName = function()
+	{
+		return 'Abdus Samad Khatri';
+	}
+
+	getUserLang= function()
+	{
+		return 'en';
+	}
+
+	getE1Language = function()
+	{
+		return '  ';
+	}
+
+	getUserId = function()
+	{
+		var aboutService = getAboutInformation();
+		if (aboutService)
+		{
+			return aboutService.userId;
+		}
+	}
+
+	getEnvironment = function()
+	{
+		var aboutService = getAboutInformation();
+		if (aboutService)
+		{
+			return aboutService.env;
+		}
+	}
+
+	getLoginRole = function()
+	{
+		var aboutService = getAboutInformation();
+		if (aboutService)
+		{
+			return aboutService.role;
+		}
+	}
+
+	getUserInfo = function()
+	{
+		var aboutService = getAboutInformation();
+		if (aboutService)
+		{
+			aboutService.fullName = getUserName();
+			aboutService.lang = getUserLang();
+			aboutService.e1Lang = getE1Language();
+		}
+		return aboutService;
+	}
+
+	getAboutInformation = function()
+	{
+		var postURL = 'E1Menu_About.mafService?outputType=JSON&timeStamp=' + (new Date()).getTime();//Changed to use the new format
+		var urlFactory = _e1URLFactory.createInstance(_e1URLFactory.URL_TYPE_RES);
+		urlFactory.setURI(postURL);
+		postURL = urlFactory.toString();
+		var respText = E1AJAX.sendSyncXMLReq('GET', postURL);
+		if (respText && respText.length > 0)
+		{
+			var aboutService = JSON.parse(respText);
+			if (aboutService && aboutService.timeout)
+			{
+				alert(aboutService.timeout);
+				window.location.replace(window.location.href);
+			}
+			else
+			{
+				return aboutService;
+			}
+		}
+	}
+document.getElementById("Username").innerHTML = getUserName();  
+document.getElementById("UserId").innerHTML = getUserId();   
+</script>
+</body>
+</html>
